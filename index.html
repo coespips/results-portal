@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>College Results</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 40px; }
+    input { padding: 10px; width: 250px; }
+    button { padding: 10px 20px; }
+    table { margin: auto; border-collapse: collapse; margin-top: 20px; }
+    td, th { border: 1px solid #ccc; padding: 8px 12px; }
+    h3 { margin-top: 20px; }
+  </style>
+</head>
+
+<body>
+
+<h2>Check Your Result</h2>
+
+<input type="text" id="reg" placeholder="Enter Register Number">
+<button onclick="getResult()">Get Result</button>
+
+<div id="result"></div>
+
+<script>
+const SHEET_ID = "1vjbp0RXoE4P9uhW1cRmXhkNVKASHkn4itfLwPU64IJM";
+const URL = `https://opensheet.elk.sh/${1vjbp0RXoE4P9uhW1cRmXhkNVKASHkn4itfLwPU64IJM}/Sheet1`;
+
+async function getResult() {
+  const reg = document.getElementById("reg").value.trim();
+
+  if (!reg) {
+    document.getElementById("result").innerHTML = "Please enter register number";
+    return;
+  }
+
+  const res = await fetch(URL);
+  const data = await res.json();
+
+  const student = data.find(row => row["Reg_No"] == reg);
+
+  if (student) {
+    document.getElementById("result").innerHTML = `
+      <h3>${student["Name"]}</h3>
+
+      <table>
+        <tr><th>Subject</th><th>Marks</th></tr>
+
+        <tr><td>Human Anatomy Physiology I</td><td>${student["SBP101T Human Anatomy Physiology I"]}</td></tr>
+        <tr><td>Pharmaceutical Analysis I</td><td>${student["SBP102T Pharmaceutical Analysis I "]}</td></tr>
+        <tr><td>Pharmaceutics I</td><td>${student["SBP103T Pharmaceutics I"]}</td></tr>
+        <tr><td>Pharmaceutical Inorganic Chemistry I</td><td>${student["SBP104T Pharmaceutical Inorganic Chemistry I"]}</td></tr>
+        <tr><td>Communication Skills</td><td>${student["SBP105T Communication Skills"]}</td></tr>
+        <tr><td>Remedial Maths/Biology</td><td>${student["SBP106 Remedial Maths/ Remedial Biology"]}</td></tr>
+
+        <tr><td>HAP Practical</td><td>${student["SBP107P Human Anatomy Physiology I Practical"]}</td></tr>
+        <tr><td>Analysis Practical</td><td>${student["SBP108P Pharmaceutical Analysis I Practical "]}</td></tr>
+        <tr><td>Pharmaceutics Practical</td><td>${student["SBP109P Pharmaceutics I Practical"]}</td></tr>
+        <tr><td>Inorganic Practical</td><td>${student["SBP110P Pharmaceutical Inorganic Chemistry I Practical"]}</td></tr>
+        <tr><td>Communication Practical</td><td>${student["SBP111P Communication Skills"]}</td></tr>
+        <tr><td>Remedial Practical</td><td>${student["SBP112 Remedial Biology Practical"]}</td></tr>
+
+        <tr><td><b>SGPA</b></td><td><b>${student["SGPA"]}</b></td></tr>
+
+      </table>
+    `;
+  } else {
+    document.getElementById("result").innerHTML = "No result found";
+  }
+}
+</script>
+
+</body>
+</html>
