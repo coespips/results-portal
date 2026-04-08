@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>College Results</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 40px;
+      background-color: #f5f5f5;
+    }
+
+    h2 { color: #333; }
+
+    input {
+      padding: 10px;
+      width: 250px;
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+    }
+
+    table {
+      margin: auto;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+    }
+
+    td, th {
+      border: 1px solid #ccc;
+      padding: 8px 12px;
+    }
+
+    th {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    #result { margin-top: 20px; }
+  </style>
+</head>
+
+<body>
+
+<h2>Check Your Result</h2>
+
+<input type="text" id="reg" placeholder="Enter Register Number">
+<button onclick="getResult()">Get Result</button>
+
+<div id="result"></div>
+
+<script>
+const SHEET_ID = "1vjbp0RXoE4P9uhW1cRmXhkNVKASHkn4itfLwPU64IJM";
+const URL = `https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
+
+async function getResult() {
+  const reg = document.getElementById("reg").value.trim();
+
+  if (!reg) {
+    document.getElementById("result").innerHTML = "Please enter register number";
+    return;
+  }
+
+  try {
+    const res = await fetch(URL);
+    const data = await res.json();
+
+    const student = data.find(row => row.Reg_No == reg);
+
+    if (!student) {
+      document.getElementById("result").innerHTML = "No result found";
+      return;
+    }
+
+    document.getElementById("result").innerHTML = `
+      <h3>${student.Name}</h3>
+
+      <table>
+        <tr><th>Subject</th><th>Marks</th></tr>
+
+        <tr><td>SBP101T</td><td>${student.SBP101T}</td></tr>
+        <tr><td>SBP102T</td><td>${student.SBP102T}</td></tr>
+        <tr><td>SBP103T</td><td>${student.SBP103T}</td></tr>
+        <tr><td>SBP104T</td><td>${student.SBP104T}</td></tr>
+        <tr><td>SBP105T</td><td>${student.SBP105T}</td></tr>
+        <tr><td>SBP106</td><td>${student.SBP106}</td></tr>
+
+        <tr><td>SBP107P</td><td>${student.SBP107P}</td></tr>
+        <tr><td>SBP108P</td><td>${student.SBP108P}</td></tr>
+        <tr><td>SBP109P</td><td>${student.SBP109P}</td></tr>
+        <tr><td>SBP110P</td><td>${student.SBP110P}</td></tr>
+        <tr><td>SBP111P</td><td>${student.SBP111P}</td></tr>
+        <tr><td>SBP112</td><td>${student.SBP112}</td></tr>
+
+        <tr><td><b>SGPA</b></td><td><b>${student.SGPA}</b></td></tr>
+      </table>
+    `;
+  } catch (error) {
+    document.getElementById("result").innerHTML = "Error loading data";
+    console.error(error);
+  }
+}
+</script>
+
+</body>
+</html>
