@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>St Peter's Institute Results</title>
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      background-color: #f5f5f5;
+      text-align: center;
+    }
+
+    .header {
+      background-color: #003366;
+      color: white;
+      padding: 20px;
+    }
+
+    .header img {
+      width: 80px;
+      display: block;
+      margin: auto;
+    }
+
+    .header h1 {
+      margin: 10px 0 5px;
+      font-size: 20px;
+    }
+
+    .container {
+      margin-top: 30px;
+    }
+
+    input, select {
+      padding: 10px;
+      width: 250px;
+      margin: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      margin: 5px;
+    }
+
+    table {
+      margin: auto;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+    }
+
+    td, th {
+      border: 1px solid #ccc;
+      padding: 8px 12px;
+    }
+
+    th {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      color: red;
+      font-weight: bold;
+    }
+
+    @media print {
+      button, input, select {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="header">
+  <img src="logo.png">
+  <h1>St Peter's Institute of Pharmaceutical Sciences (Autonomous)</h1>
+  <h3>Examination Results - March 2026</h3>
+</div>
+
+<div class="container">
+
+  <select id="course">
+    <option value="Sheet1">B.Pharm</option>
+    <option value="Sheet2">M.Pharm Pharmaceutics</option>
+    <option value="Sheet3">M.Pharm Pharmacy Practice</option>
+  </select><br>
+
+  <input type="text" id="reg" placeholder="Enter Register Number"><br>
+
+  <!-- CAPTCHA -->
+  <div>
+    <span id="captchaQuestion"></span><br>
+    <input type="text" id="captchaInput" placeholder="Enter answer">
+  </div>
+
+  <button onclick="getResult()">Get Result</button>
+  <button onclick="printResult()">Print</button>
+
+  <div id="result"></div>
+
+  <div class="disclaimer">
+    Revaluation can be applied at Exam Cell on or before 18/04/2026.
+  </div>
+
+</div>
+
+<script>
+const SHEET_ID = "1vjbp0RXoE4P9uhW1cRmXhkNVKASHkn4itfLwPU64IJM";
+
+/* CAPTCHA */
+let num1, num2, correctAnswer;
+
+function generateCaptcha() {
+  num1 = Math.floor(Math.random() * 10);
+  num2 = Math.floor(Math.random() * 10);
+  correctAnswer = num1 + num2;
+
+  document.getElementById("captchaQuestion").innerText =
+    `What is ${num1} + ${num2}?`;
+}
+
+/* SUBJECT MAP */
+const SUBJECT_MAP = {
+
+  Sheet1: {
+    SBP101T: "Human Anatomy & Physiology I",
+    SBP102T: "Pharmaceutical Analysis I",
+    SBP103T: "Pharmaceutics I",
+    SBP104T: "Pharmaceutical Inorganic Chemistry I",
+    SBP105T: "Communication Skills",
+    SBP106: "Remedial Maths / Biology",
+    SBP107P: "HAP Practical",
+    SBP108P: "Analysis Practical",
+    SBP109P: "Pharmaceutics Practical",
+    SBP110P: "Inorganic Practical",
+    SBP111P: "Communication Practical",
+    SBP112: "Remedial Practical"
+  },
+
+  Sheet2: {
+    SMPH101T: "Modern Pharmaceutical Analytical Techniques",
+    SMPH102T: "Drug Delivery Systems",
+    SMPH103T: "Modern Pharmaceutics",
+    SMPH104T: "Regulatory Affairs",
+    SMPH105P: "Pharmaceutics Practical I",
+    Seminar: "Seminar"
+  },
+
+  Sheet3: {
+    SMPP101T: "Clinical Pharmacy Practice",
+    SMPP102T: "Pharmacotherapeutics I",
+    SMPP103T: "Hospital and Clinical Pharmacy",
+    SMPP104T: "Clinical Research",
+    SMPP105P: "Pharmacy Practice Practical I",
+    SEMINAR: "Seminar"
+  }
+};
+
+async function getResult() {
+  const reg = document.getElementById("reg").value.trim();
+  const sheet = document.getElementById("course").value;
+  const userAnswer = document.getElementById("captchaInput").value;
+
+  if (!reg) {
+    document.getElementById("result").innerHTML = "Please enter register number";
+    return;
+  }
+
+  if (parseInt(userAnswer) !== correctAnswer) {
+    document.getElementById("result").innerHTML = "Captcha incorrect";
+    generateCaptcha();
+    return;
+  }
+
+  const URL = `https://opensheet.elk.sh/${SHEET_ID}/${sheet}`;
+
+  const res = await fetch(URL);
+  const data = await res.json();
+
+  const student = data.find(row => row.Reg_No == reg);
+
+  if (!student) {
+    document.getElementById("result").innerHTML = "No result found";
+    return;
+  }
+
+  let rows = "";
+  const subjects = SUBJECT_MAP[sheet];
+
+  for (let key in subjects) {
+    rows += `
+      <tr>
+        <td>${subjects[key]} (${key})</td>
+        <td>${student[key] || "-"}</td>
+      </tr>
+    `;
+  }
+
+  document.getElementById("result").innerHTML = `
+    <h3>${student.Name}</h3>
+
+    <table>
+      <tr><th>Subject</th><th>Marks</th></tr>
+      ${rows}
+      <tr><td><b>SGPA</b></td><td><b>${student.SGPA}</b></td></tr>
+      <tr><td><b>Result</b></td><td><b>${student.Result}</b></td></tr>
+    </table>
+  `;
+
+  generateCaptcha(); // reset after use
+}
+
+function printResult() {
+  window.print();
+}
+
+window.onload = generateCaptcha;
+</script>
+
+</body>
+</html>
