@@ -1,66 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>St Peter's Institute Results</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>St Peter's Institute of Pharmaceutical Sciences - Results</title>
+
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       margin: 0;
-      background-color: #f5f5f5;
+      background: #f5f5f5;
       text-align: center;
+      color: #222;
     }
 
     .header {
-      background-color: #003366;
-      color: white;
-      padding: 20px;
+      background: #003366;
+      color: #fff;
+      padding: 20px 12px;
     }
 
     .header img {
       width: 80px;
+      max-width: 25vw;
       display: block;
-      margin: auto;
+      margin: 0 auto 10px;
     }
 
     .header h1 {
-      margin: 10px 0 5px;
+      margin: 8px 0 5px;
       font-size: 20px;
     }
 
+    .header h3 {
+      margin: 5px 0;
+      font-size: 17px;
+    }
+
     .container {
-      margin-top: 30px;
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 12px 30px;
     }
 
     input, select {
       padding: 10px;
-      width: 250px;
+      width: 320px;
+      max-width: 92%;
       margin: 5px;
+      box-sizing: border-box;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      font-size: 15px;
     }
 
     button {
       padding: 10px 20px;
       cursor: pointer;
-      background-color: #007BFF;
-      color: white;
-      border: none;
+      background: #007BFF;
+      color: #fff;
+      border: 0;
       margin: 5px;
+      border-radius: 4px;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    #captchaBox {
+      margin-top: 8px;
+    }
+
+    #captchaQuestion {
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 3px;
+    }
+
+    .result-card {
+      background: #fff;
+      margin: 24px auto 0;
+      padding: 18px;
+      border-radius: 6px;
+      box-shadow: 0 1px 5px rgba(0,0,0,.12);
+      overflow-x: auto;
+    }
+
+    .result-card h2 {
+      margin: 4px 0 8px;
+      font-size: 20px;
+    }
+
+    .result-card h3 {
+      margin: 6px 0 14px;
+      font-size: 18px;
+    }
+
+    .meta {
+      margin: 5px 0;
+      font-weight: bold;
     }
 
     table {
-      margin: auto;
+      margin: 18px auto;
       border-collapse: collapse;
-      margin-top: 20px;
-      background: white;
+      width: 100%;
+      background: #fff;
+      min-width: 520px;
     }
 
-    td, th {
+    th, td {
       border: 1px solid #ccc;
-      padding: 8px 12px;
+      padding: 9px 10px;
+      text-align: center;
+      vertical-align: middle;
     }
 
     th {
-      background-color: #007BFF;
-      color: white;
+      background: #007BFF;
+      color: #fff;
+    }
+
+    .final-result {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 14px;
     }
 
     .disclaimer {
@@ -69,9 +135,75 @@
       font-weight: bold;
     }
 
+    .error {
+      color: #b00020;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .loading {
+      color: #444;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 600px) {
+      .header h1 {
+        font-size: 18px;
+      }
+
+      .header h3 {
+        font-size: 15px;
+      }
+
+      .container {
+        margin-top: 20px;
+      }
+
+      .result-card {
+        padding: 10px;
+      }
+
+      table {
+        font-size: 13px;
+      }
+
+      th, td {
+        padding: 7px 6px;
+      }
+    }
+
     @media print {
-      button, input, select {
-        display: none;
+      body {
+        background: #fff;
+      }
+
+      .header {
+        background: #fff;
+        color: #000;
+        padding: 10px;
+      }
+
+      .header img {
+        width: 65px;
+      }
+
+      .controls, .disclaimer {
+        display: none !important;
+      }
+
+      .result-card {
+        box-shadow: none;
+        margin-top: 0;
+        padding: 0;
+      }
+
+      table {
+        width: 100%;
       }
     }
   </style>
@@ -79,150 +211,557 @@
 
 <body>
 
-<div class="header">
-  <img src="logo.png">
-  <h1>St Peter's Institute of Pharmaceutical Sciences (Autonomous)</h1>
-  <h3>Examination Results - March 2026</h3>
-</div>
-
-<div class="container">
-
-  <select id="course">
-    <option value="Sheet1">B.Pharm</option>
-    <option value="Sheet2">M.Pharm Pharmaceutics</option>
-    <option value="Sheet3">M.Pharm Pharmacy Practice</option>
-  </select><br>
-
-  <input type="text" id="reg" placeholder="Enter Register Number"><br>
-
-  <!-- CAPTCHA -->
-  <div>
-    <span id="captchaQuestion"></span><br>
-    <input type="text" id="captchaInput" placeholder="Enter answer">
+  <div class="header">
+    <img src="logo.png" alt="College Logo">
+    <h1>St Peter's Institute of Pharmaceutical Sciences (Autonomous)</h1>
+    <h3>Examination Results - July/August 2026</h3>
   </div>
 
-  <button onclick="getResult()">Get Result</button>
-  <button onclick="printResult()">Print</button>
+  <div class="container">
 
-  <div id="result"></div>
+    <div class="controls">
+      <select id="course">
+        <option value="">-- Select Result --</option>
+        <option value="BPharm_II_Sem">B.Pharm I Year – II Semester</option>
+        <option value="MPharm_Ceutics_II_Sem">M.Pharm Pharmaceutics I Year – II Semester</option>
+        <option value="MPharm_Practice_II_Sem">M.Pharm Pharmacy Practice I Year – II Semester</option>
+        <option value="PharmD_I_Year">Pharm.D I Year</option>
+        <option value="PharmD_PB_I_Year">Pharm.D PB I Year</option>
+        <option value="Supp_BPharm_I_Sem">Supplementary B.Pharm I Year – I Semester</option>
+        <option value="Supp_MPharm_Ceutics_I_Sem">Supplementary M.Pharm Pharmaceutics I Semester</option>
+      </select>
 
-  <div class="disclaimer">
-    Revaluation can be applied at Exam Cell on or before 18/04/2026.
+      <br>
+
+      <input
+        type="text"
+        id="reg"
+        placeholder="Enter Register Number"
+        autocomplete="off"
+      >
+
+      <div id="captchaBox">
+        <span id="captchaQuestion"></span><br>
+        <input
+          type="text"
+          id="captchaInput"
+          placeholder="Enter answer"
+          inputmode="numeric"
+          autocomplete="off"
+        >
+      </div>
+
+      <br>
+
+      <button type="button" onclick="getResult()">Get Result</button>
+      <button type="button" onclick="printResult()">Print</button>
+    </div>
+
+    <div id="result"></div>
+
+    <div class="disclaimer">
+      Revaluation can be applied at Exam Cell on or before 09/10/2026.
+    </div>
+
   </div>
-
-</div>
 
 <script>
+"use strict";
+
+/*
+  Only these 7 sheets are configured below.
+  The previous 3 result sheets are intentionally NOT included.
+*/
 const SHEET_ID = "1vjbp0RXoE4P9uhW1cRmXhkNVKASHkn4itfLwPU64IJM";
 
-/* CAPTCHA */
-let num1, num2, correctAnswer;
+const COURSE_CONFIG = {
 
-function generateCaptcha() {
-  num1 = Math.floor(Math.random() * 10);
-  num2 = Math.floor(Math.random() * 10);
-  correctAnswer = num1 + num2;
-
-  document.getElementById("captchaQuestion").innerText =
-    `What is ${num1} + ${num2}?`;
-}
-
-/* SUBJECT MAP */
-const SUBJECT_MAP = {
-
-  Sheet1: {
-    SBP101T: "Human Anatomy & Physiology I",
-    SBP102T: "Pharmaceutical Analysis I",
-    SBP103T: "Pharmaceutics I",
-    SBP104T: "Pharmaceutical Inorganic Chemistry I",
-    SBP105T: "Communication Skills",
-    SBP106: "Remedial Maths / Biology",
-    SBP107P: "HAP Practical",
-    SBP108P: "Analysis Practical",
-    SBP109P: "Pharmaceutics Practical",
-    SBP110P: "Inorganic Practical",
-    SBP111P: "Communication Practical",
-    SBP112: "Remedial Practical"
+  BPharm_II_Sem: {
+    title: "B.Pharm I Year – II Semester",
+    type: "regular",
+    metric: "SGPA",
+    subjects: [
+      ["SBP201T", "Human Anatomy and Physiology II – Theory"],
+      ["SBP202T", "Pharmaceutical Organic Chemistry I – Theory"],
+      ["SBP203T", "Biochemistry – Theory"],
+      ["SBP204T", "Pathophysiology – Theory"],
+      ["SBP205T", "Computer Applications in Pharmacy – Theory"],
+      ["SBP206T", "Environmental Sciences – Theory"],
+      ["SBP207P", "Human Anatomy and Physiology II – Practical"],
+      ["SBP208P", "Pharmaceutical Organic Chemistry I – Practical"],
+      ["SBP209P", "Biochemistry – Practical"],
+      ["SBP210P", "Computer Applications in Pharmacy – Practical"]
+    ]
   },
 
-  Sheet2: {
-    SMPH101T: "Modern Pharmaceutical Analytical Techniques",
-    SMPH102T: "Drug Delivery Systems",
-    SMPH103T: "Modern Pharmaceutics",
-    SMPH104T: "Regulatory Affairs",
-    SMPH105P: "Pharmaceutics Practical I",
-    Seminar: "Seminar"
+  MPharm_Ceutics_II_Sem: {
+    title: "M.Pharm Pharmaceutics I Year – II Semester",
+    type: "regular",
+    metric: "SGPA",
+    subjects: [
+      ["SMPH201T", "Molecular Pharmaceutics (Nano Tech and Targeted DDS)"],
+      ["SMPH202T", "Advanced Biopharmaceutics & Pharmacokinetics"],
+      ["SMPH203T", "Computer Aided Drug Delivery System"],
+      ["SMPH204T", "Cosmetic and Cosmeceuticals"],
+      ["SMPH205P", "Pharmaceutics Practical II"],
+      ["Seminar", "Seminar/Assignment"]
+    ]
   },
 
-  Sheet3: {
-    SMPP101T: "Clinical Pharmacy Practice",
-    SMPP102T: "Pharmacotherapeutics I",
-    SMPP103T: "Hospital and Clinical Pharmacy",
-    SMPP104T: "Clinical Research",
-    SMPP105P: "Pharmacy Practice Practical I",
-    SEMINAR: "Seminar"
+  MPharm_Practice_II_Sem: {
+    title: "M.Pharm Pharmacy Practice I Year – II Semester",
+    type: "regular",
+    metric: "SGPA",
+    subjects: [
+      ["SMPP201T", "Principles of Quality Use of Medicines"],
+      ["SMPP202T", "Pharmacotherapeutics II"],
+      ["SMPP203T", "Clinical Pharmacokinetics and Therapeutic Drug Monitoring"],
+      ["SMPP204T", "Pharmacoepidemiology & Pharmacoeconomics"],
+      ["SMPP205P", "Pharmacy Practice Practical II"],
+      ["Seminar", "Seminar/Assignment"]
+    ]
+  },
+
+  PharmD_I_Year: {
+    title: "Pharm.D I Year",
+    type: "pharmd",
+    metric: "Percentage",
+    subjects: [
+      {
+        code: "SDP1.1",
+        name: "Human Anatomy and Physiology",
+        theory: "SDP1.1T",
+        practical: "SDP1.1P",
+        result: "SDP1.1_Result"
+      },
+      {
+        code: "SDP1.2",
+        name: "Pharmaceutics",
+        theory: "SDP1.2T",
+        practical: "SDP1.2P",
+        result: "SDP1.2_Result"
+      },
+      {
+        code: "SDP1.3",
+        name: "Medicinal Biochemistry",
+        theory: "SDP1.3T",
+        practical: "SDP1.3P",
+        result: "SDP1.3_Result"
+      },
+      {
+        code: "SDP1.4",
+        name: "Pharmaceutical Organic Chemistry",
+        theory: "SDP1.4T",
+        practical: "SDP1.4P",
+        result: "SDP1.4_Result"
+      },
+      {
+        code: "SDP1.5",
+        name: "Pharmaceutical Inorganic Chemistry",
+        theory: "SDP1.5T",
+        practical: "SDP1.5P",
+        result: "SDP1.5_Result"
+      },
+      {
+        code: "SDP1.6",
+        name: "Remedial Mathematics / Biology",
+        single: "SDP1.6",
+        result: "SDP1.6_Result"
+      }
+    ]
+  },
+
+  PharmD_PB_I_Year: {
+    title: "Pharm.D PB I Year",
+    type: "pharmd",
+    metric: "Percentage",
+    subjects: [
+      {
+        code: "SDP4.1",
+        name: "Pharmacotherapeutics-III",
+        theory: "SDP4.1T",
+        practical: "SDP4.1P",
+        result: "SDP4.1_Result"
+      },
+      {
+        code: "SDP4.2",
+        name: "Hospital Pharmacy",
+        theory: "SDP4.2T",
+        practical: "SDP4.2P",
+        result: "SDP4.2_Result"
+      },
+      {
+        code: "SDP4.3",
+        name: "Clinical Pharmacy",
+        theory: "SDP4.3T",
+        practical: "SDP4.3P",
+        result: "SDP4.3_Result"
+      },
+      {
+        code: "SDP4.4",
+        name: "Biostatistics & Research Methodology",
+        single: "SDP4.4",
+        result: "SDP4.4_Result"
+      },
+      {
+        code: "SDP4.5",
+        name: "Biopharmaceutics & Pharmacokinetics",
+        theory: "SDP4.5T",
+        practical: "SDP4.5P",
+        result: "SDP4.5_Result"
+      },
+      {
+        code: "SDP4.6",
+        name: "Clinical Toxicology",
+        single: "SDP4.6",
+        result: "SDP4.6_Result"
+      },
+      {
+        code: "SDP4.7",
+        name: "Pharmacotherapeutics I & II",
+        theory: "SDP4.7T",
+        practical: "SDP4.7P",
+        result: "SDP4.7_Result"
+      }
+    ]
+  },
+
+  Supp_BPharm_I_Sem: {
+    title: "Supplementary B.Pharm I Year – I Semester",
+    type: "supplementary",
+    metric: null,
+    subjects: [
+      ["SBP101T", "Human Anatomy and Physiology I – Theory"],
+      ["SBP102T", "Pharmaceutical Analysis I – Theory"],
+      ["SBP103T", "Pharmaceutics I – Theory"],
+      ["SBP104T", "Pharmaceutical Inorganic Chemistry – Theory"]
+    ]
+  },
+
+  Supp_MPharm_Ceutics_I_Sem: {
+    title: "Supplementary M.Pharm Pharmaceutics I Semester",
+    type: "supplementary",
+    metric: null,
+    subjects: [
+      ["SMPH101T", "Modern Pharmaceutical Analytical Techniques"],
+      ["SMPH102T", "Drug Delivery Systems"],
+      ["SMPH103T", "Modern Pharmaceutics"],
+      ["SMPH104T", "Regulatory Affair"],
+      ["SMPH105P", "Pharmaceutics Practical I"]
+    ]
   }
 };
 
-async function getResult() {
-  const reg = document.getElementById("reg").value.trim();
-  const sheet = document.getElementById("course").value;
-  const userAnswer = document.getElementById("captchaInput").value;
+let captchaAnswer = null;
 
-  if (!reg) {
-    document.getElementById("result").innerHTML = "Please enter register number";
-    return;
-  }
+function generateCaptcha() {
+  const a = Math.floor(Math.random() * 10);
+  const b = Math.floor(Math.random() * 10);
 
-  if (parseInt(userAnswer) !== correctAnswer) {
-    document.getElementById("result").innerHTML = "Captcha incorrect";
-    generateCaptcha();
-    return;
-  }
+  captchaAnswer = a + b;
 
-  const URL = `https://opensheet.elk.sh/${SHEET_ID}/${sheet}`;
+  document.getElementById("captchaQuestion").textContent =
+    "What is " + a + " + " + b + "?";
 
-  const res = await fetch(URL);
-  const data = await res.json();
+  document.getElementById("captchaInput").value = "";
+}
 
-  const student = data.find(row => row.Reg_No == reg);
+function escapeHTML(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
-  if (!student) {
-    document.getElementById("result").innerHTML = "No result found";
-    return;
-  }
+function clean(value) {
+  return String(value ?? "").trim();
+}
 
+function isBlank(value) {
+  return clean(value) === "";
+}
+
+function showError(message) {
+  document.getElementById("result").innerHTML =
+    '<div class="error">' + escapeHTML(message) + "</div>";
+}
+
+function renderRegularResult(student, config) {
   let rows = "";
-  const subjects = SUBJECT_MAP[sheet];
 
-  for (let key in subjects) {
+  config.subjects.forEach(([key, label]) => {
+    const value = clean(student[key]);
+
     rows += `
       <tr>
-        <td>${subjects[key]} (${key})</td>
-        <td>${student[key] || "-"}</td>
+        <td>${escapeHTML(label)}</td>
+        <td>${escapeHTML(value || "-")}</td>
+      </tr>
+    `;
+  });
+
+  const metricRow = config.metric ? `
+    <tr>
+      <td><b>${escapeHTML(config.metric)}</b></td>
+      <td><b>${escapeHTML(clean(student[config.metric]) || "-")}</b></td>
+    </tr>
+  ` : "";
+
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Grade / Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows}
+        ${metricRow}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderPharmDResult(student, config) {
+  let rows = "";
+
+  config.subjects.forEach(subject => {
+
+    if (subject.single) {
+      const value = clean(student[subject.single]);
+      const result = clean(student[subject.result]);
+
+      /*
+        Show the subject if either the supplied value or the
+        subject-level PASS/FAIL value is present.
+      */
+      if (isBlank(value) && isBlank(result)) {
+        return;
+      }
+
+      rows += `
+        <tr>
+          <td>${escapeHTML(subject.name)}</td>
+          <td>${escapeHTML(value || "-")}</td>
+          <td>-</td>
+          <td>${escapeHTML(result || "-")}</td>
+        </tr>
+      `;
+      return;
+    }
+
+    const theory = clean(student[subject.theory]);
+    const practical = clean(student[subject.practical]);
+    const result = clean(student[subject.result]);
+
+    if (isBlank(theory) && isBlank(practical) && isBlank(result)) {
+      return;
+    }
+
+    rows += `
+      <tr>
+        <td>${escapeHTML(subject.name)}</td>
+        <td>${escapeHTML(theory || "-")}</td>
+        <td>${escapeHTML(practical || "-")}</td>
+        <td>${escapeHTML(result || "-")}</td>
+      </tr>
+    `;
+  });
+
+  if (!rows) {
+    rows = `
+      <tr>
+        <td colspan="4">No subject details available</td>
       </tr>
     `;
   }
 
-  document.getElementById("result").innerHTML = `
-    <h3>${student.Name}</h3>
-
+  return `
     <table>
-      <tr><th>Subject</th><th>Marks</th></tr>
-      ${rows}
-      <tr><td><b>SGPA</b></td><td><b>${student.SGPA}</b></td></tr>
-      <tr><td><b>Result</b></td><td><b>${student.Result}</b></td></tr>
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Theory</th>
+          <th>Practical</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows}
+      </tbody>
     </table>
   `;
+}
 
-  generateCaptcha(); // reset after use
+function renderSupplementaryResult(student, config) {
+  let rows = "";
+
+  config.subjects.forEach(([key, label]) => {
+    const value = clean(student[key]);
+
+    /*
+      Supplementary rule:
+      display ONLY a subject where a grade/value is allotted.
+    */
+    if (isBlank(value)) {
+      return;
+    }
+
+    rows += `
+      <tr>
+        <td>${escapeHTML(label)}</td>
+        <td>${escapeHTML(value)}</td>
+      </tr>
+    `;
+  });
+
+  if (!rows) {
+    rows = `
+      <tr>
+        <td colspan="2">No subject grades allotted</td>
+      </tr>
+    `;
+  }
+
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Grade / Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows}
+      </tbody>
+    </table>
+  `;
+}
+
+async function getResult() {
+  const course = document.getElementById("course").value;
+  const reg = clean(document.getElementById("reg").value);
+  const captcha = clean(document.getElementById("captchaInput").value);
+  const resultBox = document.getElementById("result");
+
+  resultBox.innerHTML = "";
+
+  if (!course) {
+    showError("Please select a result category.");
+    return;
+  }
+
+  if (!reg) {
+    showError("Please enter register number.");
+    return;
+  }
+
+  if (captcha === "" || Number(captcha) !== captchaAnswer) {
+    showError("Numerical verification failed. Please try again.");
+    generateCaptcha();
+    return;
+  }
+
+  const config = COURSE_CONFIG[course];
+
+  if (!config) {
+    showError("Invalid result category.");
+    return;
+  }
+
+  resultBox.innerHTML =
+    '<div class="loading">Loading result...</div>';
+
+  try {
+    const url =
+      "https://opensheet.elk.sh/" +
+      SHEET_ID +
+      "/" +
+      encodeURIComponent(course);
+
+    const response = await fetch(url, { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error("Data request failed");
+    }
+
+    const data = await response.json();
+
+    const student = data.find(row =>
+      clean(row.Reg_No) === reg
+    );
+
+    if (!student) {
+      showError("No result found for this register number.");
+      generateCaptcha();
+      return;
+    }
+
+    let tableHTML = "";
+
+    if (config.type === "pharmd") {
+      tableHTML = renderPharmDResult(student, config);
+    } else if (config.type === "supplementary") {
+      tableHTML = renderSupplementaryResult(student, config);
+    } else {
+      tableHTML = renderRegularResult(student, config);
+    }
+
+    const metricHTML = config.metric ? `
+      <div class="meta">
+        ${escapeHTML(config.metric)}:
+        ${escapeHTML(clean(student[config.metric]) || "-")}
+      </div>
+    ` : "";
+
+    resultBox.innerHTML = `
+      <div class="result-card">
+
+        <h2>${escapeHTML(config.title)}</h2>
+
+        <h3>${escapeHTML(clean(student.Name) || "")}</h3>
+
+        <div class="meta">
+          Register Number:
+          ${escapeHTML(clean(student.Reg_No) || reg)}
+        </div>
+
+        ${tableHTML}
+
+        ${metricHTML}
+
+        <div class="final-result">
+          Result:
+          ${escapeHTML(clean(student.Result) || "-")}
+        </div>
+
+      </div>
+    `;
+
+    generateCaptcha();
+
+  } catch (error) {
+    console.error(error);
+    showError("Unable to load result. Please try again.");
+    generateCaptcha();
+  }
 }
 
 function printResult() {
+  const resultBox = document.getElementById("result");
+
+  if (!resultBox.innerHTML.trim()) {
+    showError("Please get a result before printing.");
+    return;
+  }
+
   window.print();
 }
 
-window.onload = generateCaptcha;
+window.addEventListener("load", generateCaptcha);
 </script>
 
 </body>
