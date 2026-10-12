@@ -229,6 +229,7 @@
         <option value="PharmD_PB_I_Year">Pharm.D PB I Year</option>
         <option value="Supp_BPharm_I_Sem">Supplementary B.Pharm I Year – I Semester</option>
         <option value="Supp_MPharm_Ceutics_I_Sem">Supplementary M.Pharm Pharmaceutics I Semester</option>
+        <option value="Revaluation_Results">Revaluation Results</option>
       </select>
 
       <br>
@@ -449,6 +450,12 @@ const COURSE_CONFIG = {
       ["SMPH104T", "Regulatory Affair"],
       ["SMPH105P", "Pharmaceutics Practical I"]
     ]
+  },
+
+  Revaluation_Results: {
+    title: "Revaluation Results",
+    type: "revaluation",
+    metric: null
   }
 };
 
@@ -641,6 +648,35 @@ function renderSupplementaryResult(student, config) {
   `;
 }
 
+function renderRevaluationResult(rows) {
+  const tableRows = rows.map(row => `
+    <tr>
+      <td>${escapeHTML(clean(row.Program) || "-")}</td>
+      <td>${escapeHTML(clean(row["Subject Code"]) || "-")}</td>
+      <td>${escapeHTML(clean(row.Subject) || "-")}</td>
+      <td>${escapeHTML(clean(row["Benefit Status"]) || "-")}</td>
+      <td>${escapeHTML(clean(row["Final Grade/Mark"]) || "-")}</td>
+      <td>${escapeHTML(clean(row["Revised SGPA"]) || "-")}</td>
+    </tr>
+  `).join("");
+
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th>Program</th>
+          <th>Subject Code</th>
+          <th>Subject</th>
+          <th>Benefit Status</th>
+          <th>Final Grade/Mark</th>
+          <th>Revised SGPA</th>
+        </tr>
+      </thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+  `;
+}
+
 async function getResult() {
   const course = document.getElementById("course").value;
   const reg = clean(document.getElementById("reg").value);
@@ -690,9 +726,29 @@ async function getResult() {
 
     const data = await response.json();
 
-    const student = data.find(row =>
-      clean(row.Reg_No) === reg
-    );
+    if (config.type === "revaluation") {
+      const matches = data.filter(row => clean(row.Reg_No) === reg);
+
+      if (!matches.length) {
+        showError("No revaluation result found for this register number.");
+        generateCaptcha();
+        return;
+      }
+
+      const first = matches[0];
+      resultBox.innerHTML = `
+        <div class="result-card">
+          <h2>${escapeHTML(config.title)}</h2>
+          <h3>${escapeHTML(clean(first.Name) || "")}</h3>
+          <div class="meta">Register Number: ${escapeHTML(clean(first.Reg_No) || reg)}</div>
+          ${renderRevaluationResult(matches)}
+        </div>
+      `;
+      generateCaptcha();
+      return;
+    }
+
+    const student = data.find(row => clean(row.Reg_No) === reg);
 
     if (!student) {
       showError("No result found for this register number.");
@@ -719,25 +775,12 @@ async function getResult() {
 
     resultBox.innerHTML = `
       <div class="result-card">
-
         <h2>${escapeHTML(config.title)}</h2>
-
         <h3>${escapeHTML(clean(student.Name) || "")}</h3>
-
-        <div class="meta">
-          Register Number:
-          ${escapeHTML(clean(student.Reg_No) || reg)}
-        </div>
-
+        <div class="meta">Register Number: ${escapeHTML(clean(student.Reg_No) || reg)}</div>
         ${tableHTML}
-
         ${metricHTML}
-
-        <div class="final-result">
-          Result:
-          ${escapeHTML(clean(student.Result) || "-")}
-        </div>
-
+        <div class="final-result">Result: ${escapeHTML(clean(student.Result) || "-")}</div>
       </div>
     `;
 
